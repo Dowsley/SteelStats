@@ -2,6 +2,7 @@ from json import load
 import mysql.connector
 from mysql.connector import errorcode
 from csv import reader
+from datetime import datetime
 
 # Connect to database
 def connect(config):
@@ -19,42 +20,52 @@ def connect(config):
 
 # TODO: Populate database with data from a csv
 def populate(db):
-    return 0
-    """cursor = db.cursor()
-    sqlFormula = "INSERT INTO dados_cadastrais_pj (cnpj,identificador_matriz_filial,razao_social,nome_fantasia,codigo_natureza_juridica,data_inicio_atividade,cnae_fiscal,descricao_tipo_logradouro,logradouro,numero,complemento,bairro,cep,uf,municipio,ddd_telefone_1,ddd_telefone_2,ddd_fax,correio_eletronico,porte_empresa,opcao_pelo_simples,opcao_pelo_mei) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    with open('raw_data/cnpj_dados_cadastrais_pj.csv', 'r', encoding="utf8") as file:
-        reader = reader(file, delimiter='#')
+    cursor = db.cursor()
+    entries = []
+    # String grande demais
+    sqlFormula = """INSERT INTO record (cod_equipment, id_equipment_status, cod_shift,
+                    cod_crew, equipment_status_mode, unplanned_time, stopped_time,
+                    production_time, id_material_definition, dt_start,dt_end,
+                    qty_produced, metallic_loss, theoretical_duration_by_pph,
+                    theoretical_duration_by_pph_for_calculation
+                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    """
+    with open('amostras/DbSample.csv', 'r', encoding="utf8") as file:
+        read = reader(file, delimiter=',')
         line_count = 0
-        entries = []
-        for row in reader:
+        next(read)
+        for row in read:
             line_count += 1
-            if (line_count > 7992000):
-                entry = (
-                    row[3], # cnpj (X) NN
-                    )
-                entries.append(entry)
-                if (line_count % 10000 == 0 or line_count == 42484600) and line_count != 1:
-                    print(line_count)
-                    try:
-                        cursor.executemany(sqlFormula,entries)
-                        print("Insertion finished.")
-                        entries.clear()
-                    except Exception as e:
-                        print("Error during insertion:",e)
-                        cursor.close()
-                        DB.close()
-                        print("Connection aborted.")
-                        exit(0)
-                if (line_count % 1000000 == 0):
-                    print("<< Commiting changes >>")
-                    db.commit()
-                    print("<< Changes commited. >>")
+            entry = []
+            for i in range(2, 17): # Vai da coluna 2 até a 16
+                p = row[i]
+                # Se for coluna 11 e 12 (datas), processa antes de inserir.
+                if (i==11 or i ==12):
+                    p = datetime.strptime(row[i], '%m/%d/%Y %H:%M')
+                entry.append(p)
+            entries.append(entry)
+            # Executar query a cada 10 mil linhas, e quando chegar na última.
+            # Limpa as queries para não lotar a memória RAM
+            if (line_count % 10000 == 0 or line_count == 1048575):
+                try:
+                    cursor.executemany(sqlFormula,entries)
+                    print("Insertion finished.")
+                    entries.clear()
+                except Exception as e:
+                    print("Error during insertion:",e)
+                    cursor.close()
+                    print("Connection aborted.")
+                    return 0
+            # Dar commit a cada 100 mil linhas
+            # Em geral, a conexão é demorada
+            if (line_count % 100000 == 0 or line_count == 1048575):
+                print("<< Commiting changes {}>>".format(line_count))
+                db.commit()
+                print("<< Changes commited. >>")
 
-        print("CSV terminado",line_count)
-
-    db.commit()
-    print("Successfully finished all insertions.")
-    cursor.close()"""
+        print("FINISHED. Insertions made with success:", line_count)
+        cursor.close()
+        return 1
 
 
 # ----- MAIN ----- #
