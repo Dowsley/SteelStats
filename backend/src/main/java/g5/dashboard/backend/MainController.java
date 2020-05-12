@@ -23,4 +23,15 @@ public class MainController {
 
     return recordRepository.getAnnualOee(code, year);
   }
+
+  // Example:
+  // localhost:8080/demo/get_monthly_oee?code=REC-T1-LAMTRE-LF03&month=11&year=2015
+  @GetMapping(path="/get_monthly_oee")
+  public @ResponseBody Double getEquipmentRecords_1(
+  @RequestParam String code, @RequestParam Integer month ,@RequestParam Integer year) {
+
+    return recordRepository.getMonthlylOee(code, month, year);
+  }
+
+  
 }
