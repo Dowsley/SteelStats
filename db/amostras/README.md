@@ -9,9 +9,9 @@ Sugestão de fazer três níveis de OEE (Diário, semanal, mensal), *"pode simpl
 
 ## Dicas de Tiago para PERDAS:
 
-soma das paradas = É os segundos/minutos/horas de todos dos itens do "des_tipo_falha" -> row[3] somados.
+soma das paradas = É os minutos de todas as falhas durante o dia = "des_tipo_falha" -> row[3] somados.
 
-- Tempo Calendario = data final - data inicial 
+- Tempo Calendario = 1440(minutos/dia)  
 - Tempo Livre =  soma de paradas com tipo de falha LIVRE - des_tipo_falha -> LIVRE
 - Causas Externas = soma de paradas com tipo de falha EXTERNA - des_tipo_falha -> EXTERNA
 - Paradas Programadas = soma de paradas com tipo de falha PROGRAMADA - des_tipo_falha -> PROGRAMADA
