@@ -19,7 +19,7 @@ def connect(config):
         return 0
 
 # TODO: Populate database with data from a csv
-def populate(db):
+def populate_record(db):
     cursor = db.cursor()
     entries = []
     # String grande demais
@@ -67,10 +67,57 @@ def populate(db):
         cursor.close()
         return 1
 
+def populate_perda(db):
+    cursor = db.cursor()
+    entries = []
+    # String grande demais
+    sqlFormula = """INSERT INTO perda (nom_local, des_local, oid_falha, des_tipo_falha, 
+                    des_atributo_falha, des_disfuncao_processo, des_falha, 
+                    idc_detalhes_falha, dth_inicial_realizado, dth_final_realizado) 
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    with open('amostras/perdas_laminacao.csv', 'r', encoding="utf8") as file:
+        read = reader(file, delimiter=',')
+        line_count = 0
+        next(read)
+        for row in read:
+            line_count += 1
+            entry = []
+            for i in range(10): # Vai da coluna 0 até a 9
+                p = row[i]
+                # Se for coluna 8 e 9 (datas), processa antes de inserir.
+                if (i==8 or i==9):
+                    p = datetime.strptime(row[i], '%m/%d/%Y %H:%M')
+                entry.append(p)
+            entries.append(entry)
+            # Executar query a cada 10 mil linhas, e quando chegar na última.
+            # Limpa as queries para não lotar a memória RAM
+            if (line_count % 5000 == 0 or line_count == 14168):
+                try:
+                    cursor.executemany(sqlFormula,entries)
+                    print("Insertion finished.")
+                    entries.clear()
+                except Exception as e:
+                    print("Error during insertion:",e)
+                    cursor.close()
+                    print("Connection aborted.")
+                    return 0
+            # Dar commit a cada 100 mil linhas
+            # Em geral, a conexão é demorada
+            if (line_count == 14168):
+                print("<< Commiting changes {}>>".format(line_count))
+                db.commit()
+                print("<< Changes commited. >>")
+
+        print(line_count)
+        print("FINISHED. Insertions made with success:", line_count)
+        cursor.close()
+        return 1    
+
 
 # ----- MAIN ----- #
 print("Press 1 to only test connection with database.")
-print("Press 2 to populate database from csv.")
+print("Press 2 to populate RECORD database from csv.")
+print("Press 3 to populate PERDA database from csv.")
 n = int(input("Choice: "))
 
 # Load Credentials
@@ -82,7 +129,9 @@ db = connect(config)
 if db:
     print("Connection successfull:", db)
     if n == 2:
-        populate(db)
+        populate_record(db)
+    elif n == 3:
+        populate_perda(db)
     db.close()
 else:
     print("Connection failed")
