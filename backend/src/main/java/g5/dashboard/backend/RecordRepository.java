@@ -37,4 +37,7 @@ public interface RecordRepository extends CrudRepository<Record, Integer> {
     , nativeQuery = true)
     Double getDailyOee(String code, Integer day, Integer month, Integer year);
 
+    @Query(value = "SELECT DISTINCT EXTRACT(YEAR FROM dt_start)" +
+    " FROM record WHERE cod_equipment = ?1", nativeQuery = true)
+    Iterable<Integer> findYearsByEquipment(String codEquipment);
   }
