@@ -16,7 +16,7 @@ import ChartComponent from "./Chart.component.vue"
 import EquipmentDataService from '../service/EquipmentDataService';
 
 export default {
-    name: "InstructorApp",
+    name: "EquipmentApp",
     components: {
       ChartComponent
     },
