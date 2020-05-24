@@ -7,7 +7,7 @@ Na pasta ```"frontend"``` fica o "dashboard", que é o projeto do front-end em V
 - ```npm run build``` 👉 Para compilar e buildar o app para produção. Não será usado até o final do projeto.
 
 Na pasta ```"backend"``` fica o projeto do Spring Web.
-- Versão do JDK (mínimo): ```Java 8```
+- Versão do JDK (mínimo): ```Java 8```.
 
 Na pasta ```"db"``` ficam as ferramentas para gerenciamento da nossa database.
 - ```MySQL RDS (free-tier) na AWS```
