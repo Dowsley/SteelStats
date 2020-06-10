@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import ChartComponent from "./Chart.component.vue"
-import EquipmentDataService from '../service/EquipmentDataService';
+import ChartComponent from "@/components/graficos/ColumnChart.vue";
+import EquipamentoService from '@/service/EquipamentoService';
 
 export default {
-    name: "EquipmentApp",
+    name: "Equipmento",
     components: {
       ChartComponent
     },
@@ -33,7 +33,7 @@ export default {
     methods: {
       refreshOees() {
         this.name = this.txtInput;
-        EquipmentDataService.retrieveAnnualOees(this.name)
+        EquipamentoService.retrieveAnnualOees(this.name)
           .then(response => {
             console.log(response.data)
             let categories = [];

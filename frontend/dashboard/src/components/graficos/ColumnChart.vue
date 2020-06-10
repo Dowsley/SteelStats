@@ -8,7 +8,7 @@
 import VueApexCharts from 'vue-apexcharts'
 
 export default {
-  name: 'Chart',
+  name: 'ColumnChart',
   components: {
     apexcharts: VueApexCharts,
   },

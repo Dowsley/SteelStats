@@ -1,22 +1,30 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import LoginComponent from "../views/login.vue"
-import SecureComponent from "../views/secure.vue"
+import Vue from 'vue';
+import Router from 'vue-router';
 
-Vue.use(VueRouter)
+import DashboardComponent from '@/components/views/dashboard/Dashboard.vue';
+import EquipmentoComponent from '@/components/views/equipamento/Equipamento.vue' ;
+import PerdasComponent from '@/components/views/perdas/Perdas.vue' ;
 
-export default new VueRouter({
-    routes: [
-        {
-            path: '/',
-            redirect: {
-                name: "login"
-            }
-        },
-        {
-            path: "/login",
-            name: "login",
-            component: LoginComponent
-        },
-    ]
+Vue.use(Router)
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'index',
+      props: true,
+      component: DashboardComponent
+    },
+    {
+      path: '/perdas',
+      name: 'perdas',
+      props: true,
+      component: PerdasComponent
+    },
+    {
+      path: '/equipamento',
+      name: 'equipamento',
+      props: true,
+      component: EquipmentoComponent
+    }
+  ]
 })

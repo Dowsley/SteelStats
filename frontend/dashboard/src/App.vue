@@ -1,20 +1,31 @@
 <template>
-  <div class="container">
-    <EquipmentApp/>
+  <div id="app">
+		<Menu/>
+		<main id="page-wrap">
+			<router-view/>
+		</main>
   </div>
 </template>
 
 <script>
-import EquipmentApp from './components/EquipmentApp.vue'
+import Menu from '@/components/Menu.component.vue';
 
 export default {
-  name: 'equipment-app',
-  components: {
-    EquipmentApp
-  }
+	name: 'app',
+	components: {
+		Menu,
+	} 
 }
 </script>
 
+<!-- Estilização global para todas os componentes -->
 <style>
-@import url(https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css)
+	#app {
+		font-family: 'Avenir', Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		color: #2c3e50;
+		margin-top: 60px;
+	}
 </style>
