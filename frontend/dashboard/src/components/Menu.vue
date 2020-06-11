@@ -1,5 +1,5 @@
 <template>
-	<Push isOpen noOverlay>
+	<Push isOpen noOverlay width="258">
 		<router-link to="/">Início</router-link>
 		<br>
 		<router-link to="equipamento">Equipamento</router-link>
