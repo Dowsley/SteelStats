@@ -2,23 +2,24 @@
   <v-app id="app">
     <v-navigation-drawer
       v-model="drawer"
-      :clipped="$vuetify.breakpoint.lgAndUp"
+      clipped
       app
 			class="primary"
-			width="258"
+			width="272"
     >
       <v-list dense>
-					<v-text-field
-						flat
-						solo
-						hide-details
-						prepend-inner-icon="mdi-magnify"
-						label=""
-						class="secondary--text hidden-sm-and-down"
-						background-color="#ecedf0"
-						style="display:block; margin-right:12px; margin-left: 12px;"
-					></v-text-field>
-        <v-list-item link>
+				<v-text-field
+					flat
+					solo
+					hide-details
+					prepend-inner-icon="mdi-magnify"
+					label=""
+					class="secondary--text hidden-sm-and-down"
+					background-color="#ecedf0"
+					style="display:block; margin-right:12px; margin-left: 12px; border-radius: 5px;"
+					height="38"
+				></v-text-field>
+        <v-list-item link to="/">
           <v-list-item-action>
             <v-icon>mdi-view-dashboard</v-icon>
           </v-list-item-action>
@@ -31,7 +32,7 @@
 						</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link to="equipamento">
           <v-list-item-action>
             <v-icon>mdi-cog</v-icon>
           </v-list-item-action>
@@ -40,7 +41,7 @@
 						style="font-size:14px"
 						class="secondary--text font-weight-bold neue"
 						>
-						Settings
+						Equipamento
 						</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -53,50 +54,29 @@
 			class="secondary"
 			flat
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+				<v-icon color="#DFE1E7">mdi-menu</v-icon>
+			</v-app-bar-nav-icon>
       <v-toolbar-title class="primary--text">Application</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col class="shrink">
-            <v-tooltip right>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  :href="source"
-                  icon
-                  large
-                  target="_blank"
-                  v-on="on"
-                >
-                  <v-icon large>mdi-code-tags</v-icon>
-                </v-btn>
-              </template>
-              <span>Source</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </v-container>
+			<router-view/>
     </v-content>
-
-    <v-footer app>
-      <span>&copy; 2020</span>
-    </v-footer>
   </v-app>
 </template>
 
 <script>
+	
+
   export default {
     props: {
       source: String,
-    },
+		},
+
+		components: {
+			
+		},
 
     data: () => ({
       drawer: true,

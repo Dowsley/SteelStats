@@ -1,14 +1,34 @@
 <template>
-    <div>
-      <input type="text" v-model="txtInput">
-      <input id="submitButton" type="submit" value="Pesquisar" v-on:click="refreshOees">
-      <ChartComponent
-        v-if="childDataLoaded"
-        :name="name"
-        :categories="categories"
-        :data="data"
-      />  
-    </div>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <v-row
+          align="center"
+          justify="space-around"
+          style="height: 300px;"
+        >
+					<v-card
+					:key=n
+					v-for="n in 2"
+					rounded
+					color="#fbfbfb"
+					>
+						<input type="text" v-model="txtInput">
+						<input id="submitButton" type="submit" value="Pesquisar" v-on:click="refreshOees">
+						<ChartComponent
+							v-if="childDataLoaded"
+							:name="name"
+							:categories="categories"
+							:data="data"
+						/>  
+						<v-card-text>
+							OEE Anual
+						</v-card-text>
+					</v-card>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -18,7 +38,7 @@ import EquipamentoService from '@/service/EquipamentoService';
 export default {
     name: "Equipmento",
     components: {
-      ChartComponent
+			ChartComponent,
     },
     // Test
 		data(){
