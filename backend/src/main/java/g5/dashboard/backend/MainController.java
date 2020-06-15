@@ -39,6 +39,26 @@ public class MainController {
     return somaParadas;
   }  
 
+  
+  @GetMapping("/perda/{year}/{tipo}")
+  public Double tempoLivre(@PathVariable Integer year, @PathVariable String tipo) {
+    Double tempoLivre = perdaRepository.getTempoLivre(year, tipo);
+    return tempoLivre;
+  } 
+
+  @GetMapping("/perda/externa/{year}/{tipo}")
+  public Double causasExternas(@PathVariable Integer year, @PathVariable String tipo) {
+    Double causaExternas = perdaRepository.getCausasExternas(year, tipo);
+    return causaExternas;
+  } 
+
+  @GetMapping("/perda/programada/{year}/{tipo}")
+  public Double paradasProgramada(@PathVariable Integer year, @PathVariable String tipo) {
+    Double paradasProgramada = perdaRepository.getParadasProgramadas(year, tipo);
+    return paradasProgramada;
+  } 
+
+
 
 
 }

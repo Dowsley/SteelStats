@@ -14,6 +14,42 @@ public interface PerdaRepository extends CrudRepository<Perda, Integer> {
     + " FROM perda"
     + " WHERE year(dth_inicial_realizado)= ?1"
     , nativeQuery = true)
-    Double getSomadasParadas(Integer year);
+    Double getParadaGeralAnual(Integer year);
+
+    @Query(value = "SELECT"
+    + " SUM(TIMESTAMPDIFF(minute, dth_inicial_realizado, dth_final_realizado)) "
+    + " FROM perda"
+    + " WHERE des_tipo_falha= ?2  AND year(dth_inicial_realizado)= ?1"
+    , nativeQuery = true)
+    Double getParadaAnual(Integer year, String tipo);
+
+    @Query(value = "SELECT"
+    + " SUM(TIMESTAMPDIFF(minute, dth_inicial_realizado, dth_final_realizado)) "
+    + " FROM perda"
+    + " WHERE month(dth_inicial_realizado)= ?2 AND year(dth_inicial_realizado)= ?1"
+    , nativeQuery = true)
+    Double getParadaGeralMensal(Integer year, Integer month);
+
+    @Query(value = "SELECT"
+    + " SUM(TIMESTAMPDIFF(minute, dth_inicial_realizado, dth_final_realizado)) "
+    + " FROM perda"
+    + " WHERE des_tipo_falha= ?3 AND month(dth_inicial_realizado)= ?2 AND year(dth_inicial_realizado)= ?1"
+    , nativeQuery = true)
+    Double getParadaMensal(Integer year,  Integer month,String tipo);
+
+    @Query(value = "SELECT"
+    + " SUM(TIMESTAMPDIFF(minute, dth_inicial_realizado, dth_final_realizado)) "
+    + " FROM perda"
+    + " WHERE day(dth_inicial_realizado)= ?3 AND month(dth_inicial_realizado)= ?2 AND year(dth_inicial_realizado)= ?1"
+    , nativeQuery = true)
+    Double getParadaGeralDiaria(Integer year, Integer month, Integer day);
+
+    @Query(value = "SELECT"
+    + " SUM(TIMESTAMPDIFF(minute, dth_inicial_realizado, dth_final_realizado)) "
+    + " FROM perda"
+    + " WHERE des_tipo_falha= ?4 AND day(dth_inicial_realizado)= ?3 AND month(dth_inicial_realizado)= ?2 AND year(dth_inicial_realizado)= ?1"
+    , nativeQuery = true)
+    Double getParadaDiaria(Integer year,  Integer month, Integer day ,String tipo);
+
 
 }
