@@ -15,6 +15,9 @@ public class MainController {
   @Autowired
   private RecordRepository recordRepository;
   
+  @Autowired
+  private PerdaRepository perdaRepository;
+
   @GetMapping("/equipment/{code}")
   public ApiEquipmentResponse equipmentAnnualOees(@PathVariable String code) {
     Iterable<Integer> activeYears = recordRepository.findYearsByEquipment(code);
@@ -29,4 +32,13 @@ public class MainController {
     response.setOees(annualOee);
     return response;
   }  
+
+  @GetMapping("/perda/{year}")
+  public Double yearlyPerda(@PathVariable Integer year) {
+    Double somaParadas = perdaRepository.getSomadasParadas(year);
+    return somaParadas;
+  }  
+
+
+
 }

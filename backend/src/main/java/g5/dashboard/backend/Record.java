@@ -25,7 +25,7 @@ public class Record {
 
     private Double unplannedTime;
     
-    private Double stoppedTime;
+    private Double stoppedTime; 
 
     private Double productionTime;
 
