@@ -33,32 +33,36 @@ public class MainController {
     return response;
   }  
 
-  @GetMapping("/perda/{year}")
-  public Double yearlyPerda(@PathVariable Integer year) {
-    Double somaParadas = perdaRepository.getSomadasParadas(year);
+  @GetMapping("/perda/{tipo}/{ano}/{mes}/{dia}")
+  public Double perdaGeralDiaria(@PathVariable String tipo,
+  @PathVariable Integer ano, @PathVariable Integer mes, @PathVariable Integer dia) {
+    /* Substitui _ com barras */
+    tipo.replace('_', '/');
+     
+    Double somaParadas;
+    /* Se não tem tipo */
+    if (tipo.equals("0")) {
+      if (dia != 0)
+        somaParadas = perdaRepository.getParadaGeralDiaria(ano,mes,dia);
+      else if (mes != 0)
+        somaParadas = perdaRepository.getParadaGeralMensal(ano,mes);
+      else if (ano != 0)
+        somaParadas = perdaRepository.getParadaGeralAnual(ano);
+      else
+        somaParadas = perdaRepository.getParadaGeral();
+    }
+    /* Se tem tipo */
+    else {
+      if (dia != 0)
+        somaParadas = perdaRepository.getParadaDiaria(ano,mes,dia,tipo);
+      else if (mes != 0)
+        somaParadas = perdaRepository.getParadaMensal(ano,mes,tipo);
+      else if (ano != 0)
+        somaParadas = perdaRepository.getParadaAnual(ano,tipo);
+      else
+        somaParadas = perdaRepository.getParada(tipo);
+    }
+
     return somaParadas;
   }  
-
-  
-  @GetMapping("/perda/{year}/{tipo}")
-  public Double tempoLivre(@PathVariable Integer year, @PathVariable String tipo) {
-    Double tempoLivre = perdaRepository.getTempoLivre(year, tipo);
-    return tempoLivre;
-  } 
-
-  @GetMapping("/perda/externa/{year}/{tipo}")
-  public Double causasExternas(@PathVariable Integer year, @PathVariable String tipo) {
-    Double causaExternas = perdaRepository.getCausasExternas(year, tipo);
-    return causaExternas;
-  } 
-
-  @GetMapping("/perda/programada/{year}/{tipo}")
-  public Double paradasProgramada(@PathVariable Integer year, @PathVariable String tipo) {
-    Double paradasProgramada = perdaRepository.getParadasProgramadas(year, tipo);
-    return paradasProgramada;
-  } 
-
-
-
-
 }
