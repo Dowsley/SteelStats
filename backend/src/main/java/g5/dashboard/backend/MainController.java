@@ -33,6 +33,35 @@ public class MainController {
     return response;
   }  
 
+  @GetMapping("/record/{code}/{day}/{month}/{year}")
+  public Double recordGeralDiaria(@PathVariable String code,
+  @PathVariable Integer day, @PathVariable Integer month, @PathVariable Integer year) {
+   
+    Double testeRecord = 0.0;
+
+    /* Se não tem máquina */
+    if (code.equals("0")) {
+      if (day != 0)
+      testeRecord = recordRepository.getPerformanceGeralDiario(day,month,year);
+      else if (month != 0)
+      testeRecord = recordRepository.getPerformanceGeralMensal(month,year);
+      else if (year != 0)
+      testeRecord = recordRepository.getPerformanceGeralAnual(year);
+      else
+      testeRecord = recordRepository.getPerformanceGeral();
+   }
+  /* Se tem máquina */
+    else {
+      if (day != 0)
+      testeRecord = recordRepository.getPerformanceDiario(code,day,month,year);
+      else if (month != 0)
+      testeRecord = recordRepository.getPerformanceMensal(code,month,year);
+      else if (year != 0)
+      testeRecord = recordRepository.getPerformanceAnual(code,year);
+    } 
+    return testeRecord;
+}
+
   @GetMapping("/perda/{tipo}/{ano}/{mes}/{dia}")
   public Double perdaGeralDiaria(@PathVariable String tipo,
   @PathVariable Integer ano, @PathVariable Integer mes, @PathVariable Integer dia) {
