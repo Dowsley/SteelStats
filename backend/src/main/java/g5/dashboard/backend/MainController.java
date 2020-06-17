@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
@@ -18,80 +19,87 @@ public class MainController {
   @Autowired
   private PerdaRepository perdaRepository;
 
-  @GetMapping("/equipment/{code}")
-  public ApiEquipmentResponse equipmentAnnualOees(@PathVariable String code) {
-    Iterable<Integer> activeYears = recordRepository.findYearsByEquipment(code);
-    
-    Map<Integer, Double> annualOee = new HashMap<Integer, Double>();
-    for (Integer year : activeYears) {
-      annualOee.put(year, recordRepository.getAnnualOee(code, year));
+  /* ***************************** */
+  /* CALCULOS DE EVENTO DE MAQUINA */
+  /* ***************************** */
+
+  @GetMapping("/oees/{cod}")
+  public ApiEquipmentResponse equipamentoOeeAnual(@PathVariable String cod) {
+    Iterable<Integer> anosAtivos = recordRepository.getAnosAtivos(cod);
+
+    Map<Integer, Double> oeeAnual = new HashMap<Integer, Double>();
+    for (Integer ano : anosAtivos) {
+      oeeAnual.put(
+        ano,
+        recordRepository.getDisponibilidade(cod, ano, null, null) *
+        recordRepository.getQualidade(cod, ano, null, null) *
+        recordRepository.getPerformance(cod, ano, null, null) * 100
+      );
     }
     
     ApiEquipmentResponse response = new ApiEquipmentResponse();
-    response.setEquipmentName(code);
-    response.setOees(annualOee);
+    response.setEquipmentName(cod);
+    response.setOees(oeeAnual);
     return response;
   }  
 
-  @GetMapping("/record/{code}/{day}/{month}/{year}")
-  public Double recordGeralDiaria(@PathVariable String code,
-  @PathVariable Integer day, @PathVariable Integer month, @PathVariable Integer year) {
-   
-    Double testeRecord = 0.0;
+  @GetMapping({"/performance/{cod}", "/performance"})
+  public Double calculoPerformance(@PathVariable Optional<String> cod,
+                                   @RequestParam Optional<Integer> ano, 
+                                   @RequestParam Optional<Integer> mes,
+                                   @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getPerformance(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
 
-    /* Se não tem máquina */
-    if (code.equals("0")) {
-      if (day != 0)
-      testeRecord = recordRepository.getPerformanceGeralDiario(day,month,year);
-      else if (month != 0)
-      testeRecord = recordRepository.getPerformanceGeralMensal(month,year);
-      else if (year != 0)
-      testeRecord = recordRepository.getPerformanceGeralAnual(year);
-      else
-      testeRecord = recordRepository.getPerformanceGeral();
-   }
-  /* Se tem máquina */
-    else {
-      if (day != 0)
-      testeRecord = recordRepository.getPerformanceDiario(code,day,month,year);
-      else if (month != 0)
-      testeRecord = recordRepository.getPerformanceMensal(code,month,year);
-      else if (year != 0)
-      testeRecord = recordRepository.getPerformanceAnual(code,year);
-    } 
-    return testeRecord;
-}
+  @GetMapping({"/qualidade/{cod}", "/qualidade"})
+  public Double calculoQualidade(@PathVariable Optional<String> cod,
+                                 @RequestParam Optional<Integer> ano, 
+                                 @RequestParam Optional<Integer> mes,
+                                 @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getQualidade(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
 
-  @GetMapping("/perda/{tipo}/{ano}/{mes}/{dia}")
-  public Double perdaGeralDiaria(@PathVariable String tipo,
-  @PathVariable Integer ano, @PathVariable Integer mes, @PathVariable Integer dia) {
-    /* Substitui _ com barras */
-    tipo.replace('_', '/');
-     
-    Double somaParadas;
-    /* Se não tem tipo */
-    if (tipo.equals("0")) {
-      if (dia != 0)
-        somaParadas = perdaRepository.getParadaGeralDiaria(ano,mes,dia);
-      else if (mes != 0)
-        somaParadas = perdaRepository.getParadaGeralMensal(ano,mes);
-      else if (ano != 0)
-        somaParadas = perdaRepository.getParadaGeralAnual(ano);
-      else
-        somaParadas = perdaRepository.getParadaGeral();
-    }
-    /* Se tem tipo */
-    else {
-      if (dia != 0)
-        somaParadas = perdaRepository.getParadaDiaria(ano,mes,dia,tipo);
-      else if (mes != 0)
-        somaParadas = perdaRepository.getParadaMensal(ano,mes,tipo);
-      else if (ano != 0)
-        somaParadas = perdaRepository.getParadaAnual(ano,tipo);
-      else
-        somaParadas = perdaRepository.getParada(tipo);
-    }
+  @GetMapping({"/disponibilidade/{cod}", "/disponibilidade"})
+  public Double calculoDisponibilidade(@PathVariable Optional<String> cod,
+                                  @RequestParam Optional<Integer> ano, 
+                                  @RequestParam Optional<Integer> mes,
+                                  @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getDisponibilidade(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
 
-    return somaParadas;
-  }  
+  /* ************************** */
+  /* CALCULOS DE PERDAS DA ÁREA */
+  /* ************************** */
+
+  @GetMapping({"/perda/{tipo}", "/perda"})
+  public Double calculoPerda(@PathVariable Optional<String> tipo,
+                             @RequestParam Optional<Integer> ano, 
+                             @RequestParam Optional<Integer> mes,
+                             @RequestParam Optional<Integer> dia) {
+    Double calculo = perdaRepository.getParada(
+      tipo.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
 }
