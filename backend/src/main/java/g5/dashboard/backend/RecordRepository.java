@@ -3,32 +3,27 @@ package g5.dashboard.backend;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import g5.dashboard.backend.Record;
-
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
 // CRUD refers Create, Read, Update, Delete
 public interface RecordRepository extends CrudRepository<Record, Integer> {
   /* Queries para achar períodos em que um equipamento esteve ativo */
   @Query(value = "SELECT DISTINCT EXTRACT(YEAR FROM dt_start)"
-  + " FROM record WHERE (cod_equipment = ?1 or cod_equipment is null)",
+  + " FROM record WHERE (cod_equipment = ?1 or ?1 is null)",
   nativeQuery = true)
   Iterable<Integer> getAnosAtivos(String cod);
 
-  @Query(value = "SELECT DISTINCT EXTRACT(YEAR FROM dt_start)"
-  + " FROM record WHERE (cod_equipment = ?1 or cod_equipment is null)"
-  + " and year(dt_start)=?2 and month(dt_start)=?3", nativeQuery = true)
+  @Query(value = "SELECT DISTINCT EXTRACT(MONTH FROM dt_start)"
+  + " FROM record WHERE (cod_equipment = ?1 or ?1 is null)"
+  + " and year(dt_start)=?2", nativeQuery = true)
   Iterable<Integer> getMesesAtivos(String cod, 
-                                  Integer ano, 
-                                  Integer mes);
+                                  Integer ano);
 
-  @Query(value = "SELECT DISTINCT EXTRACT(YEAR FROM dt_start)"
-  + " FROM record WHERE (cod_equipment = ?1 or cod_equipment is null)"
-  + " and year(dt_start)=?2 and month(dt_start)=?3 and day(dt_start)=?4", 
-  nativeQuery = true)
+  @Query(value = "SELECT DISTINCT EXTRACT(DAY FROM dt_start)"
+  + " FROM record WHERE (cod_equipment = ?1 or ?1 is null)"
+  + " and year(dt_start)=?2 and month(dt_start)=?3", nativeQuery = true)
   Iterable<Integer> getDiasAtivos(String cod, 
                                   Integer ano, 
-                                  Integer mes, 
-                                  Integer dia);
+                                  Integer mes);
 
   /* Calculos de Disponibilidade
   * performance e qualidade */

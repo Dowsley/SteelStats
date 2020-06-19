@@ -3,8 +3,6 @@ package g5.dashboard.backend;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import g5.dashboard.backend.Perda;
-
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
 // CRUD refers Create, Read, Update, Delete
 public interface PerdaRepository extends CrudRepository<Perda, Integer> {
@@ -33,7 +31,6 @@ public interface PerdaRepository extends CrudRepository<Perda, Integer> {
   @Query(value = "SELECT sum(IF(des_tipo_falha=?1, 1, 0) )"
   + " / count(*) FROM perda" ,nativeQuery=true)
   Double getPorcentagemTipoFalha(String tipo);
-
 
   /* Retorna a porcentagem (decimal) de um determinado 
   disfuncao de processo comparado ao total (no grupo de uma falha) */
