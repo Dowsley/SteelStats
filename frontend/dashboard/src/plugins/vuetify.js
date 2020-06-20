@@ -27,6 +27,7 @@ export default new Vuetify({
         secondary: '#3a3c53',
         accent: '#ffb900',
         info: '#222335',
+        textHelper: '#DFE1E7',
       }
     }
   }
