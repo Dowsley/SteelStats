@@ -158,7 +158,7 @@ public class MainController {
     return calculo;
   }
 
-  @GetMapping({"/perdas/{tipo}", "/porcentPerda"})
+  @GetMapping({"/perdas/{tipo}", "/perdas"})
   public Map<String, Double> calculoPerda(@PathVariable Optional<String> tipo) {
     String tipoArg = tipo.orElse(null);
     /* Resgata todas as categorias 
