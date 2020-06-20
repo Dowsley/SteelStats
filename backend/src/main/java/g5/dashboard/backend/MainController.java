@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
@@ -18,51 +19,181 @@ public class MainController {
   @Autowired
   private PerdaRepository perdaRepository;
 
-  @GetMapping("/equipment/{code}")
-  public ApiEquipmentResponse equipmentAnnualOees(@PathVariable String code) {
-    Iterable<Integer> activeYears = recordRepository.findYearsByEquipment(code);
-    
-    Map<Integer, Double> annualOee = new HashMap<Integer, Double>();
-    for (Integer year : activeYears) {
-      annualOee.put(year, recordRepository.getAnnualOee(code, year));
+  /* ***************************** */
+  /* CALCULOS DE EVENTO DE MAQUINA */
+  /* ***************************** */
+
+  @GetMapping({"/oee/{cod}", "/oee"})
+  public ApiOeeResponse equipamentoOee(@PathVariable Optional<String> cod,
+                                       @RequestParam Optional<Integer> ano,
+                                       @RequestParam Optional<Integer> mes) {
+    String codArg = cod.orElse(null);  /* Nulo se não foi recebido */
+    Integer mesArg = mes.orElse(null); /* Nulo se não foi recebido */
+    Integer anoArg = ano.orElse(null); /* Nulo se não foi recebido */
+    String tipoPeriodo;
+    /* Este trecho resgasta o período ativo.
+    Que pode ser um conjunto de: Anos, meses ou dias. 
+    O Argumento de máquina é opcional */
+    Iterable<Integer> periodoAtivo;
+    if (mesArg != null) {
+      /* Resgata dias ativos de um ano e um mes específico */
+      tipoPeriodo = "diario";
+      periodoAtivo = recordRepository.getDiasAtivos(
+        codArg,
+        anoArg,
+        mesArg
+      );
+    } else if (anoArg != null) {
+      /* Resgata meses ativos de um ano específico */
+      tipoPeriodo = "mensal";
+      periodoAtivo = recordRepository.getMesesAtivos(
+        codArg,
+        anoArg
+      );
+    } else {
+      /* Resgata anos ativos desde o começo */
+      tipoPeriodo = "anual";
+      periodoAtivo = recordRepository.getAnosAtivos(
+        codArg
+      );
+      System.out.println(periodoAtivo);      
     }
-    
-    ApiEquipmentResponse response = new ApiEquipmentResponse();
-    response.setEquipmentName(code);
-    response.setOees(annualOee);
+
+    /* Para cada período (ano, mes ou dia), 
+    associar o OEE do mesmo */
+    Map<Integer, Double> oees = new HashMap<Integer, Double>();
+    if (tipoPeriodo.equals("diario")) {
+      for (Integer p : periodoAtivo) {
+        oees.put(
+          p,
+          recordRepository.getDisponibilidade(codArg, anoArg, mesArg, p) *
+          recordRepository.getQualidade(codArg, anoArg, mesArg, p) *
+          recordRepository.getPerformance(codArg, anoArg, mesArg, p) * 100
+        );
+      }
+    } else if (tipoPeriodo.equals("mensal")) {
+      for (Integer p : periodoAtivo) {
+        oees.put(
+          p,
+          recordRepository.getDisponibilidade(codArg, anoArg, p, null) *
+          recordRepository.getQualidade(codArg, anoArg, p, null) *
+          recordRepository.getPerformance(codArg, anoArg, p, null) * 100
+        );
+      }
+    } else {
+      for (Integer p : periodoAtivo) {
+        oees.put(
+          p,
+          recordRepository.getDisponibilidade(codArg, p, null, null) *
+          recordRepository.getQualidade(codArg, p, null, null) *
+          recordRepository.getPerformance(codArg, p, null, null) * 100
+        );
+      }
+    }
+
+    ApiOeeResponse response = new ApiOeeResponse();
+    response.setNomeEquipamento(codArg);
+    response.setTipoPeriodo(tipoPeriodo);
+    response.setOees(oees);
     return response;
   }  
 
-  @GetMapping("/perda/{tipo}/{ano}/{mes}/{dia}")
-  public Double perdaGeralDiaria(@PathVariable String tipo,
-  @PathVariable Integer ano, @PathVariable Integer mes, @PathVariable Integer dia) {
-    /* Substitui _ com barras */
-    tipo.replace('_', '/');
-     
-    Double somaParadas;
-    /* Se não tem tipo */
-    if (tipo.equals("0")) {
-      if (dia != 0)
-        somaParadas = perdaRepository.getParadaGeralDiaria(ano,mes,dia);
-      else if (mes != 0)
-        somaParadas = perdaRepository.getParadaGeralMensal(ano,mes);
-      else if (ano != 0)
-        somaParadas = perdaRepository.getParadaGeralAnual(ano);
-      else
-        somaParadas = perdaRepository.getParadaGeral();
+  @GetMapping({"/performance/{cod}", "/performance"})
+  public Double calculoPerformance(@PathVariable Optional<String> cod,
+                                   @RequestParam Optional<Integer> ano, 
+                                   @RequestParam Optional<Integer> mes,
+                                   @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getPerformance(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
+
+  @GetMapping({"/qualidade/{cod}", "/qualidade"})
+  public Double calculoQualidade(@PathVariable Optional<String> cod,
+                                 @RequestParam Optional<Integer> ano, 
+                                 @RequestParam Optional<Integer> mes,
+                                 @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getQualidade(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
+
+  @GetMapping({"/disponibilidade/{cod}", "/disponibilidade"})
+  public Double calculoDisponibilidade(@PathVariable Optional<String> cod,
+                                  @RequestParam Optional<Integer> ano, 
+                                  @RequestParam Optional<Integer> mes,
+                                  @RequestParam Optional<Integer> dia) {
+    Double calculo = recordRepository.getDisponibilidade(
+      cod.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
+
+  /* ************************** */
+  /* CALCULOS DE PERDAS DA ÁREA */
+  /* ************************** */
+
+  @GetMapping({"/parada/{tipo}", "/parada"})
+  public Double calculoPerda(@PathVariable Optional<String> tipo,
+                             @RequestParam Optional<Integer> ano, 
+                             @RequestParam Optional<Integer> mes,
+                             @RequestParam Optional<Integer> dia) {
+    Double calculo = perdaRepository.getParada(
+      tipo.orElse(null),
+      ano.orElse(null),
+      mes.orElse(null),
+      dia.orElse(null)
+    );
+    return calculo;
+  }
+
+  @GetMapping({"/perdas/{tipo}", "/porcentPerda"})
+  public Map<String, Double> calculoPerda(@PathVariable Optional<String> tipo) {
+    String tipoArg = tipo.orElse(null);
+    /* Resgata todas as categorias 
+    que pode ser um destes dois: 
+    1 - Tipo de falha
+    2 - Disfuncao de processo (subset de um tipo) */
+    Iterable<String> categorias;
+    if (tipoArg != null) {
+      categorias = perdaRepository.getDistinctDisfuncaoProcesso(tipoArg);
+    } else {
+      categorias = perdaRepository.getDistinctTipoFalha();
     }
-    /* Se tem tipo */
-    else {
-      if (dia != 0)
-        somaParadas = perdaRepository.getParadaDiaria(ano,mes,dia,tipo);
-      else if (mes != 0)
-        somaParadas = perdaRepository.getParadaMensal(ano,mes,tipo);
-      else if (ano != 0)
-        somaParadas = perdaRepository.getParadaAnual(ano,tipo);
-      else
-        somaParadas = perdaRepository.getParada(tipo);
+    
+    /* Calcula a porcentagem de cada um, comparado ao todo */
+    Map<String, Double> porcentagens = new HashMap<String, Double>();
+    if (tipoArg != null) {
+      /* Pega cada disfunção de 
+      processo e sua porcentagem */
+      for (String c : categorias) {
+        porcentagens.put(
+          c,
+          perdaRepository.getPorcentagemDisfuncaoProcesso(tipoArg, c) * 100
+        );
+      }
+    } else {
+      /* Pega cada tipo de 
+      falha e sua porcentagem */
+      for (String c : categorias) {
+        porcentagens.put(
+          c,
+          perdaRepository.getPorcentagemTipoFalha(c) * 100
+        );
+      }
     }
 
-    return somaParadas;
-  }  
+    return porcentagens;
+  }
 }
