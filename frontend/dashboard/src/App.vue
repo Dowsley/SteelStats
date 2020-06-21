@@ -146,7 +146,7 @@
 					items: [
 						{ title: 'Evento' , link: '/' },
 						{ title: 'Máquina', link: '/equipamento' },
-						{ title: 'Perda', link: '/' },
+						{ title: 'Perda', link: '/perdas' },
 					],
 				},
 				{

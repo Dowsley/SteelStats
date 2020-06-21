@@ -1,21 +1,30 @@
 <template>
-  <div class="dashboard">
-		<h1>{{msg}}</h1>
-  </div>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <v-row
+          align="center"
+          justify="space-around"
+          style="height: 300px;"
+        >
+					<GraficoTempoParada/>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
+import GraficoTempoParada from "@/components/graficos/GraficoTempoParada.vue";
+
 export default {
-  name: 'Perdas',
-  data () {
-    return {
-      msg: 'Aqui vai ficar a tela de perdas'
-    }
-  }
+    name: "Perdas",
+    components: {
+			GraficoTempoParada,
+    },
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
 </style>

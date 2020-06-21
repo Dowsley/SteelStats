@@ -30,6 +30,11 @@ public class MainController {
     String codArg = cod.orElse(null);  /* Nulo se não foi recebido */
     Integer mesArg = mes.orElse(null); /* Nulo se não foi recebido */
     Integer anoArg = ano.orElse(null); /* Nulo se não foi recebido */
+
+    System.out.println(codArg);
+    System.out.println(mesArg);
+    System.out.println(anoArg);
+
     String tipoPeriodo;
     /* Este trecho resgasta o período ativo.
     Que pode ser um conjunto de: Anos, meses ou dias. 
@@ -56,7 +61,6 @@ public class MainController {
       periodoAtivo = recordRepository.getAnosAtivos(
         codArg
       );
-      System.out.println(periodoAtivo);      
     }
 
     /* Para cada período (ano, mes ou dia), 
@@ -90,6 +94,8 @@ public class MainController {
         );
       }
     }
+
+    System.out.println(periodoAtivo);      
 
     ApiOeeResponse response = new ApiOeeResponse();
     response.setNomeEquipamento(codArg);
@@ -145,18 +151,97 @@ public class MainController {
   /* ************************** */
 
   @GetMapping({"/parada/{tipo}", "/parada"})
-  public Double calculoPerda(@PathVariable Optional<String> tipo,
+  public ApiParadaResponse calculoPerda(
+                             @PathVariable Optional<String> tipo,
                              @RequestParam Optional<Integer> ano, 
-                             @RequestParam Optional<Integer> mes,
-                             @RequestParam Optional<Integer> dia) {
-    Double calculo = perdaRepository.getParada(
-      tipo.orElse(null),
-      ano.orElse(null),
-      mes.orElse(null),
-      dia.orElse(null)
-    );
-    return calculo;
+                             @RequestParam Optional<Integer> mes) {
+    String tipoArg = tipo.orElse(null);  /* Nulo se não foi recebido */
+    Integer mesArg = mes.orElse(null); /* Nulo se não foi recebido */
+    Integer anoArg = ano.orElse(null); /* Nulo se não foi recebido */
+    String tipoPeriodo;
+
+    System.out.println(tipoArg);
+    System.out.println(mesArg);
+    System.out.println(anoArg);
+
+    /* Este trecho resgasta o período ativo.
+    Que pode ser um conjunto de: Anos, meses ou dias. 
+    O Argumento de máquina é opcional */
+    Iterable<Integer> periodoAtivo;
+    if (mesArg != null) {
+      /* Resgata dias ativos de um ano e um mes específico */
+      tipoPeriodo = "diario";
+      periodoAtivo = perdaRepository.getDiasAtivos(
+        tipoArg,
+        anoArg,
+        mesArg
+      );
+    } else if (anoArg != null) {
+      /* Resgata meses ativos de um ano específico */
+      tipoPeriodo = "mensal";
+      periodoAtivo = perdaRepository.getMesesAtivos(
+        tipoArg,
+        anoArg
+      );
+    } else {
+      /* Resgata anos ativos desde o começo */
+      tipoPeriodo = "anual";
+      periodoAtivo = perdaRepository.getAnosAtivos(
+        tipoArg
+      );
+    }
+
+    /* Para cada período (ano, mes ou dia), 
+    associar o tempo de parada do mesmo */
+    Map<Integer, Double> paradas = new HashMap<Integer, Double>();
+    if (tipoPeriodo.equals("diario")) {
+      for (Integer p : periodoAtivo) {
+        paradas.put(
+          p,
+          perdaRepository.getParada(
+            tipoArg,
+            anoArg,
+            mesArg,
+            p
+          )
+        );
+      }
+    } else if (tipoPeriodo.equals("mensal")) {
+      for (Integer p : periodoAtivo) {
+        paradas.put(
+          p,
+          perdaRepository.getParada(
+            tipoArg,
+            anoArg,
+            p,
+            null
+          )
+        );
+      }
+    } else {
+      for (Integer p : periodoAtivo) {
+        paradas.put(
+          p,
+          perdaRepository.getParada(
+            tipoArg,
+            p,
+            null,
+            null
+          )
+        );
+      }
+    }
+
+    System.out.println(periodoAtivo);      
+
+    ApiParadaResponse response = new ApiParadaResponse();
+    response.setTipoParada(tipoArg);
+    response.setTipoPeriodo(tipoPeriodo);
+    response.setParadas(paradas);
+    return response;
   }
+
+
 
   @GetMapping({"/perdas/{tipo}", "/perdas"})
   public Map<String, Double> calculoPerda(@PathVariable Optional<String> tipo) {

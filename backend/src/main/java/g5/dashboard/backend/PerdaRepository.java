@@ -16,6 +16,26 @@ public interface PerdaRepository extends CrudRepository<Perda, Integer> {
   , nativeQuery = true)
   Double getParada(String tipo, Integer ano, Integer mes, Integer dia);
 
+  /* Queries para achar períodos que houveram falhas */
+  @Query(value = "SELECT DISTINCT EXTRACT(YEAR FROM dth_inicial_realizado)"
+  + " FROM perda WHERE (?1 is null or des_tipo_falha=?1)",
+  nativeQuery = true)
+  Iterable<Integer> getAnosAtivos(String tipo);
+
+  @Query(value = "SELECT DISTINCT EXTRACT(MONTH FROM dth_inicial_realizado)"
+  + " FROM perda WHERE (?1 is null or des_tipo_falha=?1)"
+  + " and year(dth_inicial_realizado)=?2", nativeQuery = true)
+  Iterable<Integer> getMesesAtivos(String tipo, 
+                                  Integer ano);
+
+  @Query(value = "SELECT DISTINCT EXTRACT(DAY FROM dth_inicial_realizado)"
+  + " FROM perda WHERE (?1 is null or des_tipo_falha=?1)"
+  + " and year(dth_inicial_realizado)=?2 and month(dth_inicial_realizado)=?3",
+  nativeQuery = true)
+  Iterable<Integer> getDiasAtivos(String tipo, 
+                                  Integer ano, 
+                                  Integer mes);
+  
   /* Retorna todos os diferentes tipos de falha */
   @Query(value = "SELECT DISTINCT des_tipo_falha FROM perda", nativeQuery=true)
   Iterable<String> getDistinctTipoFalha();

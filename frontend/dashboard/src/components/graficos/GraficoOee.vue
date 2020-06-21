@@ -196,25 +196,25 @@ export default {
 							type: 'bar',
 							events: {
 								dataPointSelection: (event, chartContext, config) => {
-										console.log(event);
-										console.log(chartContext);
-										console.log(config);
+									console.log(event);
+									console.log(chartContext);
+									console.log(config);
 
-										/* Muda o período */
-										let select = this.chartData.chartOptions.xaxis.categories[
-											config.dataPointIndex
-										];
-										if (this.tipo == 'anual') {
-											// Transforma em mensal
-											this.enableLabels = false;
-											this.ano = select;
-											this.refresh();
-										} else if (this.tipo == 'mensal') {
-											// Transforma em diario
-											this.enableLabels = false;
-											this.mes = select;
-											this.refresh();
-										}
+									/* Muda o período */
+									let select = this.chartData.chartOptions.xaxis.categories[
+										config.dataPointIndex
+									];
+									if (this.tipo == 'anual') {
+										// Transforma em mensal
+										this.enableLabels = false;
+										this.ano = select;
+										this.refresh();
+									} else if (this.tipo == 'mensal') {
+										// Transforma em diario
+										this.enableLabels = false;
+										this.mes = select;
+										this.refresh();
+									}
 								}
 							}
 						},
