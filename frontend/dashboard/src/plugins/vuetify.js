@@ -23,7 +23,8 @@ export default new Vuetify({
         background: '#ecedf0',
         containerSquare: '#fbfbfb',
         // General
-        primary: '#dcdada',
+        primary: '#3a3c53',
+        mainWhite: '#dcdada',
         secondary: '#3a3c53',
         accent: '#ffb900',
         info: '#222335',

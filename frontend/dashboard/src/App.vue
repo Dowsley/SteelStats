@@ -4,10 +4,10 @@
       v-model="drawer"
       clipped
       app
-			class="primary"
+			class="mainWhite"
 			width="272"
     >
-      <v-list dense>
+      <v-list>
 				<v-text-field
 					flat
 					solo
@@ -19,33 +19,40 @@
 					style="display:block; margin-right:12px; margin-left: 12px; border-radius: 5px;"
 					height="38"
 				></v-text-field>
-        <v-list-item link to="/">
-          <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title 
-						style="font-size:14px"
-						class="secondary--text font-weight-bold neue"
-						>
-						Dashboard
-						</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link to="equipamento">
-          <v-list-item-action>
-            <v-icon>mdi-cog</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title
-						style="font-size:14px"
-						class="secondary--text font-weight-bold neue"
-						>
-						Equipamento
-						</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+
+				<!-- Abas do Menu Hamburguer Lateral -->
+				<v-list-group
+					v-for="item in items"
+					:key="item.title"
+					v-model="item.active"
+					:prepend-icon="item.icon"
+					no-action
+				>
+					<template v-slot:activator>
+						<v-list-item-content>
+							<v-list-item-title
+							v-text="item.title"
+							class="secondary--text font-weight-bold neue"
+							></v-list-item-title>
+						</v-list-item-content>
+					</template>
+
+					<v-list-item
+					v-for="subItem in item.items"
+          :key="subItem.title"
+          @click="$router.push(subItem.link)"
+					>
+						<v-list-item-content>
+							<v-list-item-title 
+							v-text="subItem.title"
+							class="secondary--text"
+							></v-list-item-title>
+						</v-list-item-content>
+					</v-list-item>
+
+				</v-list-group>
+
+			</v-list>
     </v-navigation-drawer>
 
     <v-app-bar
@@ -61,7 +68,7 @@
 			<v-spacer></v-spacer>
 
 			<v-toolbar-title 
-			class="primary--text font-weight-bold neue"
+			class="mainWhite--text font-weight-bold neue"
 			style = "margin-left: 276px; cursor: pointer;"
 			@click="$router.push('/')"
 			>
@@ -121,8 +128,6 @@
 </template>
 
 <script>
-	
-
   export default {
     props: {
       source: String,
@@ -133,9 +138,40 @@
 		},
 
     data: () => ({
-      drawer: true,
-    }),
-
+			drawer: true,
+			items: [
+				{
+					icon: 'mdi-view-dashboard',
+					title: 'Dados',
+					items: [
+						{ title: 'Evento' , link: '' },
+						{ title: 'Máquina', link: '' },
+						{ title: 'Perda', link: '' },
+					],
+				},
+				{
+					icon: 'mdi-bell',
+					title: 'Área',
+					active: false,
+					items: [
+						{ title: 'Trefila', link: '' },
+						{ title: 'Laminação', link: '' },
+						{ title: 'Sucata', link: '' },
+						{ title: 'Aciaria', link: '' },
+					],
+				},
+				{
+					icon: 'mdi-cog',
+					title: 'Sistemas',
+					active: false,
+					items: [
+						{ title: 'PowerBI', link: '' },
+						{ title: 'MES', link: '' },
+						{ title: 'SAP', link: '' },
+					],
+				},
+			],
+		}),
     created () {
 			this.$vuetify.theme.dark = false
     },
@@ -164,5 +200,9 @@
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.active {
+		color: #3a3c53;
 	}
 </style>
