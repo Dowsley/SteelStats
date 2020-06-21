@@ -144,9 +144,9 @@
 					icon: 'mdi-view-dashboard',
 					title: 'Dados',
 					items: [
-						{ title: 'Evento' , link: '' },
-						{ title: 'Máquina', link: '' },
-						{ title: 'Perda', link: '' },
+						{ title: 'Evento' , link: '/' },
+						{ title: 'Máquina', link: '/equipamento' },
+						{ title: 'Perda', link: '/' },
 					],
 				},
 				{
@@ -154,10 +154,10 @@
 					title: 'Área',
 					active: false,
 					items: [
-						{ title: 'Trefila', link: '' },
-						{ title: 'Laminação', link: '' },
-						{ title: 'Sucata', link: '' },
-						{ title: 'Aciaria', link: '' },
+						{ title: 'Trefila', link: '/' },
+						{ title: 'Laminação', link: '/' },
+						{ title: 'Sucata', link: '/' },
+						{ title: 'Aciaria', link: '/' },
 					],
 				},
 				{
@@ -165,9 +165,9 @@
 					title: 'Sistemas',
 					active: false,
 					items: [
-						{ title: 'PowerBI', link: '' },
-						{ title: 'MES', link: '' },
-						{ title: 'SAP', link: '' },
+						{ title: 'PowerBI', link: '/' },
+						{ title: 'MES', link: '/' },
+						{ title: 'SAP', link: '/' },
 					],
 				},
 			],

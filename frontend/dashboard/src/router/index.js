@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import DashboardView from '@/components/views/Dashboard.vue';
 import EquipamentoView from '@/components/views/dados/Equipamento.vue';
-import PerdasView from '@/components/views/perdas/Perdas.vue';
+import PerdasView from '@/components/views/dados/Perdas.vue';
 import TrefilagemView from '@/components/views/area/Trefilagem.vue';
 import AciariaView from '@/components/views/area/Aciaria.vue';
 import MesView from '@/components/views/sistemas/Mes.vue';

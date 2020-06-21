@@ -7,24 +7,7 @@
           justify="space-around"
           style="height: 300px;"
         >
-					<v-card
-					:key=n
-					v-for="n in 2"
-					rounded
-					color="#fbfbfb"
-					>
-						<input type="text" v-model="txtInput">
-						<input id="submitButton" type="submit" value="Pesquisar" v-on:click="refreshOees">
-						<ChartComponent
-							v-if="childDataLoaded"
-							:name="name"
-							:categories="categories"
-							:data="data"
-						/>  
-						<v-card-text>
-							OEE Anual
-						</v-card-text>
-					</v-card>
+					<GraficoOee/>
         </v-row>
       </v-col>
     </v-row>
@@ -32,49 +15,13 @@
 </template>
 
 <script>
-import ChartComponent from "@/components/graficos/ColumnChart.vue";
-import EquipamentoService from '@/service/EquipamentoService';
+import GraficoOee from "@/components/graficos/GraficoOee.vue";
 
 export default {
-    name: "Equipmento",
+    name: "Equipamento",
     components: {
-			ChartComponent,
+			GraficoOee,
     },
-    // Test
-		data(){
-			return{
-        name: '',
-        categories: [],
-        data: [],
-        childDataLoaded: false,
-        txtInput: 'REC-T1-LAMTRE-LF03',
-      }
-    },
-    methods: {
-      refreshOees() {
-        this.name = this.txtInput;
-        EquipamentoService.retrieveAnnualOees(this.name)
-          .then(response => {
-            console.log(response.data)
-            let categories = [];
-            let data = [];
-            for (let [key, value] of Object.entries(response.data['oees'])) {
-              categories.push(key);
-              data.push(value);
-            }
-            this.name = response.data['equipmentName']
-            this.categories = categories;
-            this.data = data;
-            this.childDataLoaded = true;
-            console.log(this.name)
-            console.log(this.categories)
-            console.log(this.data)
-          });
-      }
-    },
-    created() {
-      this.refreshOees();
-    }
 }
 </script>
 
