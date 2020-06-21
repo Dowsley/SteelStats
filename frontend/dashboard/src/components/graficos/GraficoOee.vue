@@ -55,7 +55,8 @@ export default {
 			ano: null,
 			mes: null,
 			loading: false,
-			txtInput: '',
+			enableLabels: true,
+			txtInput: 'REC-T1-LAMTRE-LF03',
 			chartData: {
 				series: [{
 					name: 'REC-T1-LAMTRE-LF03',
@@ -65,6 +66,30 @@ export default {
 					chart: {
 						height: 350,
 						type: 'bar',
+						events: {
+							dataPointSelection: (event, chartContext, config) => {		
+								console.log(event);
+								console.log(chartContext);
+								console.log(config);
+
+								/* Muda o período */
+								console.log(this);
+								let select = this.chartData.chartOptions.xaxis.categories[
+									config.dataPointIndex
+								];
+								if (this.tipo == 'anual') {
+									// Transforma em mensal
+									this.enableLabels = false;
+									this.ano = select;
+									this.refresh();
+								} else if (this.tipo == 'mensal') {
+									// Transforma em diario
+									this.enableLabels = false;
+									this.mes = select;
+									this.refresh();
+								}
+							}
+						}
 					},
 					plotOptions: {
 						bar: {
@@ -126,7 +151,7 @@ export default {
 						max: 100
 					},
 					title: {
-						text: `OEEs anuais do equipamento: REC-T1-LAMTRE-LF03`,
+						text: `OEE anual do equipamento: REC-T1-LAMTRE-LF03`,
 						floating: true,
 						offsetY: 330,
 						align: 'center',
@@ -145,8 +170,8 @@ export default {
 			/* Realiza o GET request no backend */
 			EquipamentoService.retrieveOee(
 				this.txtInput,
-				null,
-				null
+				this.ano,
+				this.mes
 			).then(response => {
 				/* Debug */
 				console.log(response.data)
@@ -169,6 +194,29 @@ export default {
 						chart: {
 							height: 350,
 							type: 'bar',
+							events: {
+								dataPointSelection: (event, chartContext, config) => {
+										console.log(event);
+										console.log(chartContext);
+										console.log(config);
+
+										/* Muda o período */
+										let select = this.chartData.chartOptions.xaxis.categories[
+											config.dataPointIndex
+										];
+										if (this.tipo == 'anual') {
+											// Transforma em mensal
+											this.enableLabels = false;
+											this.ano = select;
+											this.refresh();
+										} else if (this.tipo == 'mensal') {
+											// Transforma em diario
+											this.enableLabels = false;
+											this.mes = select;
+											this.refresh();
+										}
+								}
+							}
 						},
 						plotOptions: {
 							bar: {
@@ -178,7 +226,7 @@ export default {
 							}
 						},
 						dataLabels: {
-							enabled: true,
+							enabled: this.enableLabels,
 							formatter: function (val) {
 								return val.toFixed(2) + "%";
 							},
@@ -230,7 +278,7 @@ export default {
 							max: 100
 						},
 						title: {
-							text: `OEEs anuais do equipamento: ${response.data['nomeEquipamento']}`,
+							text: `OEE ${this.tipo} do equipamento: ${response.data['nomeEquipamento']}`,
 							floating: true,
 							offsetY: 330,
 							align: 'center',

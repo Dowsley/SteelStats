@@ -12,7 +12,7 @@ class EquipamentoService {
     }
     // Parametros regulares
     if (mes != null) {
-      url += `?ano=${ano.toString()}&${mes.toString()}`;
+      url += `?ano=${ano.toString()}&mes=${mes.toString()}`;
     } else if (ano != null ) {
       url += `?ano=${ano.toString()}`;
     }
