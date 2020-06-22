@@ -68,12 +68,8 @@ export default {
 						type: 'bar',
 						events: {
 							dataPointSelection: (event, chartContext, config) => {		
-								console.log(event);
-								console.log(chartContext);
-								console.log(config);
-
 								/* Muda o período */
-								console.log(this);
+								console.log(this.chartData.chartOptions.xaxis.categories);
 								let select = this.chartData.chartOptions.xaxis.categories[
 									config.dataPointIndex
 								];
@@ -196,11 +192,8 @@ export default {
 							type: 'bar',
 							events: {
 								dataPointSelection: (event, chartContext, config) => {
-									console.log(event);
-									console.log(chartContext);
-									console.log(config);
-
 									/* Muda o período */
+									console.log(this.chartData.chartOptions.xaxis.categories);
 									let select = this.chartData.chartOptions.xaxis.categories[
 										config.dataPointIndex
 									];

@@ -7,7 +7,7 @@ class TempoParadaService {
   retrieveTempoParada(tipo, ano, mes) {
     var url = PARADA_API_URL;
     // Parametro de path
-    if (tipo != null) {
+    if (tipo != null && tipo.toLowerCase() != 'todos') {
       url += `/${tipo}`;
     }
     // Parametros regulares

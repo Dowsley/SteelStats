@@ -26,8 +26,18 @@
 									dark
 									v-bind="attrs"
 									v-on="on"
+									v-if="tipoParada!=null"
 								>
 									{{tipoParada}}
+								</v-btn>
+								<v-btn
+									color="primary"
+									dark
+									v-bind="attrs"
+									v-on="on"
+									v-else
+								>
+									Todos
 								</v-btn>
 							</template>
 
@@ -35,7 +45,7 @@
 								<v-list-item
 									v-for="(item, index) in items"
 									:key="index"
-									@click="tipoParada=item.tipoParada; refresh()"
+									@click="tipoParada=item.tipoParada; refresh();"
 								>
 									<v-list-item-title>{{ item.title }}</v-list-item-title>
 								</v-list-item>
@@ -68,11 +78,12 @@ export default {
   data: function() {
     return {
 			/* Misc data */
+			categories: [2019, 2020],
 			tipo: 'anual',
 			ano: null,
 			mes: null,
 			loading: false,
-			tipoParada: 'LIVRE',
+			tipoParada: 'Todos',
 			/* Dropdown data */
       items: [
         { title: 'Sistemas TI', tipoParada: 'SISTEMAS/TI'},
@@ -81,13 +92,14 @@ export default {
 				{ title: 'Programada', tipoParada: 'PROGRAMADA' },
 				{ title: 'Externa', tipoParada: 'EXTERNA' },
 				{ title: 'Livre', tipoParada: 'LIVRE' },
+				{ title: 'Todos', tipoParada: 'TODOS' },
 				// TODO: Implementar outros tipos de falha
       ],
 			/* Chart data */
 			chartData: {
 				series: [{
-						name: "LIVRE",
-						data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+						name: 'Todos',
+						data: [271609,103894]
 				}],
 				chartOptions: {
 					chart: {
@@ -98,20 +110,19 @@ export default {
 						},
 						events: {
 							dataPointSelection: (event, chartContext, config) => {
-								console.log(event);
-								console.log(chartContext);
-								console.log(config);
-
 								/* Muda o período */
+								console.log(config.dataPointIndex);
 								let select = this.chartData.chartOptions.xaxis.categories[
 									config.dataPointIndex
 								];
 								if (this.tipo == 'anual') {
 									// Transforma em mensal
+									console.log('Ano:'+select);
 									this.ano = select;
 									this.refresh();
 								} else if (this.tipo == 'mensal') {
 									// Transforma em diario
+									console.log('Mes:'+select);
 									this.mes = select;
 									this.refresh();
 								}
@@ -122,10 +133,10 @@ export default {
 						enabled: false
 					},
 					stroke: {
-						curve: 'smooth'
+						curve: 'straight'
 					},
 					title: {
-						text: 'Parada anual da área de Aciaria',
+						text: 'Parada da área de Aciaria (anual)',
 						align: 'left'
 					},
 					grid: {
@@ -135,13 +146,14 @@ export default {
 						},
 					},
 					xaxis: {
-						categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+						categories: [2019,2020]
 					},
 					tooltip: {
-						enabled: true,
+							intersect: true,
+							shared: false
 					},
 					markers: {
-						size: 1
+						size: 3,
 					}
         },
 			}
@@ -157,7 +169,6 @@ export default {
 				this.mes
 			).then(response => {
 				/* Debug */
-				console.log(response.data)
 				/* Processa a resposta */
 				let reqCategories = [];
 				let reqData = [];
@@ -169,9 +180,10 @@ export default {
 				/* Atualiza o DATA */
 				this.tipoParada = response.data['tipoParada'];
 				this.tipo = response.data['tipoPeriodo'];
+				this.categories = reqCategories;
 				this.chartData = {
 					series: [{
-						name: this.tipoParada,
+						name: response.data['tipoParada'],
 						data: reqData
 					}],
 					chartOptions: {
@@ -183,20 +195,19 @@ export default {
 							},
 							events: {
 								dataPointSelection: (event, chartContext, config) => {
-									console.log(event);
-									console.log(chartContext);
-									console.log(config);
-
 									/* Muda o período */
-									let select = this.chartData.chartOptions.xaxis.categories[
+									console.log(chartContext);
+									let select = this.categories[
 										config.dataPointIndex
 									];
 									if (this.tipo == 'anual') {
 										// Transforma em mensal
+										console.log('Ano:'+select);
 										this.ano = select;
 										this.refresh();
 									} else if (this.tipo == 'mensal') {
 										// Transforma em diario
+										console.log('Mes:'+select);
 										this.mes = select;
 										this.refresh();
 									}
@@ -207,10 +218,10 @@ export default {
 							enabled: false
 						},
 						stroke: {
-							curve: 'smooth'
+							curve: 'straight'
 						},
 						title: {
-							text: `Parada ${this.tipo} da área de Aciaria`,
+							text: `Parada da área de Aciaria (${this.tipo})`,
 							align: 'left'
 						},
 						grid: {
@@ -221,13 +232,18 @@ export default {
 						},
 						xaxis: {
 							categories: reqCategories,
-							tooltip: {
-								enabled: true,
-							}
 						},
+						tooltip: {
+								intersect: true,
+								shared: false
+						},
+						markers: {
+							size: 3,
+						}
 					},
 				};
 				this.loading = false;
+				console.log(this.categories);
 			});
 		}
 	}
