@@ -157,7 +157,7 @@
 						{ title: 'Trefila', link: '/' },
 						{ title: 'Laminação', link: '/' },
 						{ title: 'Sucata', link: '/' },
-						{ title: 'Aciaria', link: '/' },
+						{ title: 'Aciaria', link: '/aciaria' },
 					],
 				},
 				{

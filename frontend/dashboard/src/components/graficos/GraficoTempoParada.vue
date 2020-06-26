@@ -92,6 +92,9 @@ export default {
 				{ title: 'Programada', tipoParada: 'PROGRAMADA' },
 				{ title: 'Externa', tipoParada: 'EXTERNA' },
 				{ title: 'Livre', tipoParada: 'LIVRE' },
+				{ title: 'Interrupção com Manutenção', tipoParada: 'INTERRUPÇÃO DE MANUTENÇÃO' },
+				{ title: 'Interrupção Operacional', tipoParada: 'INTERRUPÇÃO OPERACIONAL' },
+				{ title: 'Operacional Oficina Cilindros', tipoParada: 'OPERACIONAL OFICINA CILINDROS' },
 				{ title: 'Todos', tipoParada: 'TODOS' },
 				// TODO: Implementar outros tipos de falha
       ],

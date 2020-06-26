@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:8080";
 const PARADA_API_URL = `${API_URL}/parada`;
 
-class TempoParadaService {
+class TipoPerdaService {
   retrieveTempoParada(tipo, ano, mes) {
     // Substituir ESCAPE chars do parametro
     tipo = tipo.replace('/', '_');
@@ -25,4 +25,4 @@ class TempoParadaService {
   }
 }
 
-export default new TempoParadaService();
+export default new TipoPerdaService();
