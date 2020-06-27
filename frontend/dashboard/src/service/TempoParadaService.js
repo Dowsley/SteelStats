@@ -6,8 +6,10 @@ const PARADA_API_URL = `${API_URL}/parada`;
 class TempoParadaService {
   retrieveTempoParada(tipo, ano, mes) {
     // Substituir ESCAPE chars do parametro
-    tipo = tipo.replace('/', '_');
-    tipo = tipo.replace(' ', '%20');
+    if (tipo!=null) {
+      tipo = tipo.replace('/', '_');
+      tipo = tipo.replace(' ', '%20');
+    }
     console.log(tipo);
     
     var url = PARADA_API_URL;
