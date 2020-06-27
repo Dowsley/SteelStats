@@ -160,6 +160,12 @@ public class MainController {
     Integer anoArg = ano.orElse(null); /* Nulo se não foi recebido */
     String tipoPeriodo;
 
+    // Caractere de escape
+    if (tipoArg != null) {
+      tipoArg = tipoArg.replace("_", "/");
+      tipoArg = tipoArg.replace("%20", " ");
+    }
+
     System.out.println(tipoArg);
     System.out.println(mesArg);
     System.out.println(anoArg);
@@ -246,6 +252,13 @@ public class MainController {
   @GetMapping({"/perdas/{tipo}", "/perdas"})
   public Map<String, Double> calculoPerda(@PathVariable Optional<String> tipo) {
     String tipoArg = tipo.orElse(null);
+
+    // Caractere de escape
+    if (tipoArg != null) {
+      tipoArg = tipoArg.replace("_", "/");
+      tipoArg = tipoArg.replace("%20", " ");
+    }
+
     /* Resgata todas as categorias 
     que pode ser um destes dois: 
     1 - Tipo de falha
