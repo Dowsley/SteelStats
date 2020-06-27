@@ -2,41 +2,51 @@
 	<v-card
 	rounded
 	color="#fbfbfb"
+	:loading="loading"
 	>
-  <DxSankey
-    id="sankey"
-    :data-source="staticData"
-    source-field="source"
-    target-field="target"
-    weight-field="weight"
-    title="Representação das Perdas de ACIARIA"
-  >
-    <DxTooltip
-      :enabled="true"
-      :customize-link-tooltip="customizeLinkTooltip"
-    />
-    <DxNode
-      :width="8"
-      :padding="30"
-    />
-    <DxLink color-mode="gradient"/>
-  </DxSankey>
+
+		<v-card-actions>
+			<v-col cols="12">
+				<v-row
+				align="start"
+				justify="space-around"
+				>
+					<v-btn 
+					icon
+					color="#3a3c53"
+					@click="refresh()"
+					>
+						<v-icon>mdi-refresh</v-icon>
+					</v-btn>
+				</v-row>
+			</v-col>
+		</v-card-actions>
+
+		<DxSankey
+			id="sankey"
+			:data-source="data"
+			source-field="source"
+			target-field="target"
+			weight-field="weight"
+			title="Representação das Perdas de ACIARIA"
+		>
+			<DxTooltip
+				:enabled="true"
+				:customize-link-tooltip="customizeLinkTooltip"
+			/>
+			<DxNode
+				:width="8"
+				:padding="30"
+			/>
+			<DxLink color-mode="gradient"/>
+		</DxSankey>
 	</v-card>
 </template>
 
 <script>
 // DOC: https://js.devexpress.com/Demos/WidgetsGallery/Demo/Charts/SankeyChart/Vue/GreenMist/
 const staticData = [
-  { source: 'Spain', target: 'United States of America', weight: 20 },
-  { source: 'Germany', target: 'United States of America', weight: 80 },
-  { source: 'France', target: 'United States of America', weight: 40 },
-  { source: 'Germany', target: 'Great Britain', weight: 20 },
-  { source: 'France', target: 'Great Britain', weight: 40 },
-  { source: 'United States of America', target: 'Australia', weight: 60 },
-  { source: 'United States of America', target: 'New Zealand', weight: 50 },
-  { source: 'United States of America', target: 'Japan', weight: 30 },
-  { source: 'Great Britain', target: 'New Zealand', weight: 40 },
-  { source: 'Great Britain', target: 'Japan', weight: 10 }
+
 ];
 
 import DxSankey, {
@@ -44,6 +54,8 @@ import DxSankey, {
   DxNode,
   DxLink
 } from 'devextreme-vue/sankey';
+
+import TipoPerdaService from '@/service/TipoPerdaService';
 
 export default {
   components: {
@@ -54,7 +66,8 @@ export default {
   },
   data() {
     return {
-      staticData
+			data: staticData,
+			loading: false
     };
   },
   methods: {
@@ -62,13 +75,40 @@ export default {
       return {
         html: `<b>From:</b> ${info.source}<br/><b>To:</b> ${info.target}<br/><b>Weight:</b> ${info.weight}`
       };
-    }
-  }
+		},
+		refresh() {
+			this.loading = '#ffb900';
+
+			TipoPerdaService.retrieveTipoPerda(
+				null,
+				null,
+				null
+			).then(response => {
+				console.log(response.data);
+				let data = [];
+				for (let i of Object.entries(response.data)) {
+					data.push(
+						{
+							source: 'Total',
+							weight: i[1]['segmento'],
+							target: i[1]['tipo']
+						}
+					);
+				}
+				console.log(data);
+				this.data = data;
+				this.loading = false;
+			});
+		}
+	},
+	mounted () {
+		this.refresh();
+	}
 };
 </script>
 
 <style>
 #sankey {
-    height: 440px;
+	width: 600px;
 }
 </style>

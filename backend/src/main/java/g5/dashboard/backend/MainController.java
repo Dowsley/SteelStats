@@ -294,4 +294,34 @@ public class MainController {
 
     return porcentagens;
   }
+
+  @GetMapping("/perdasOverview")
+  public List<ApiTipoPerdaResponse> perdasOverview() {
+
+    Iterable<String> tiposString = perdaRepository.getDistinctTipoFalha();
+    Iterable<String> disfuncoesString;
+    List<ApiTipoPerdaResponse> tipos = new ArrayList<ApiTipoPerdaResponse>();
+
+    for (String t : tiposString) {
+      Map<String, Double> disfuncoes = new HashMap<String, Double>();
+      disfuncoesString = perdaRepository.getDistinctDisfuncaoProcesso(t);
+      for (String d : disfuncoesString) {
+        disfuncoes.put(
+          d, 
+          perdaRepository.getPorcentagemDisfuncaoProcesso(t, d) * 100
+        );
+      }
+      System.out.println(String.format("Tipo: %s", t));
+      System.out.println(disfuncoes);
+      tipos.add(
+        new ApiTipoPerdaResponse(
+          t, 
+          disfuncoes, 
+          perdaRepository.getPorcentagemTipoFalha(t) * 100
+        )
+      );
+    }
+
+    return tipos;
+  }
 }
