@@ -166,7 +166,7 @@
 					active: false,
 					items: [
 						{ title: 'PowerBI', link: '/' },
-						{ title: 'MES', link: '/' },
+						{ title: 'MES', link: '/mes' },
 						{ title: 'SAP', link: '/' },
 					],
 				},

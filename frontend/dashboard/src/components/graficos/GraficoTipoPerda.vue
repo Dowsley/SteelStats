@@ -109,6 +109,7 @@ export default {
 
 <style>
 #sankey {
-	width: 600px;
+	width: 430px;
+	height: 370px;
 }
 </style>

@@ -324,4 +324,27 @@ public class MainController {
 
     return tipos;
   }
+
+  @GetMapping({"/cofatoresAnual/{cod}", "/cofatoresAnual"})
+  public ApiCofatoresResponse equipamentoCofatores(
+  @PathVariable Optional<String> cod) {
+    String codArg = cod.orElse(null);  /* Nulo se não foi recebido */
+
+    Map<Integer, Double> qualidade = new HashMap<Integer, Double>();
+    Map<Integer, Double> performance = new HashMap<Integer, Double>();
+    Map<Integer, Double> disponibilidade = new HashMap<Integer, Double>();
+    Iterable<Integer> anosAtivos = recordRepository.getAnosAtivos(codArg);
+    for (Integer ano : anosAtivos) {
+      qualidade.put(ano, recordRepository.getQualidade(codArg,null,null,null) * 100);
+      performance.put(ano, recordRepository.getPerformance(codArg,null,null,null) * 100);
+      disponibilidade.put(ano, recordRepository.getDisponibilidade(codArg,null,null,null) * 100);
+    }
+
+    return new ApiCofatoresResponse(
+      codArg,
+      qualidade,
+      performance,
+      disponibilidade
+    );
+  }
 }

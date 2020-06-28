@@ -8,6 +8,7 @@
           style="height: 300px;"
         >
 					<GraficoOee/>
+					<GraficoCofatores/>
         </v-row>
       </v-col>
     </v-row>
@@ -16,11 +17,13 @@
 
 <script>
 import GraficoOee from "@/components/graficos/GraficoOee.vue";
+import GraficoCofatores from "@/components/graficos/GraficoCofatores.vue";
 
 export default {
     name: "Equipamento",
     components: {
 			GraficoOee,
+			GraficoCofatores
     },
 }
 </script>
